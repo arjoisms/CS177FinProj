@@ -11,5 +11,3 @@ An application of the graphics concepts discussed in class.
 Submitted by
 Frank Koh and Arjo Mejilla
 Both in their 3rd Year of BS Computer Science
-
-changed sample
