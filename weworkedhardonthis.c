@@ -1,12 +1,21 @@
 #include <stdio.h>
-#include <stdarg.h>
 #include <stdlib.h>
-#include <gl/glut.h>
-
+#include <string.h>
+#include <math.h>
+#include <GL/glut.h>
+#define OVALID      1
+#define SPHEREID    2
+#define BOXID       3
+#define PLANEID     4
+#define TEXTID      5
 #define GAP  50
- 
+#define TRUE  1
+#define FALSE 0
+#define PI 3.141592653589793238462643
+
 int window_x;
 int window_y;
+int i;
 
 int window_width = 700;
 int window_height = 700;
@@ -18,6 +27,11 @@ int main_window, subwindow_1;
 int leftButton = 0;
 int middleButton = 0;
 int rightButton = 0;
+
+#define DRAFT  0
+#define MEDIUM 1
+#define BEST   2
+int drawquality = MEDIUM;
 
 float translate_x = 0.0f, translate_y = 0.0f, translate_z = 0.0f;
 float rot_x = 0.0f, rot_y = 0.0f, rot_z = 0.0f;
@@ -132,8 +146,1276 @@ void display1 (void)
 
 void drawObject ()
 {
-    glutWireTeapot (0.5);
+      int i;
+   double radius = 1.0;
+   static double theta = 0;
+   GLfloat mshin1[] = {5.0};               /* For the sphere */
+   GLfloat mspec1[] = {0.5,0.5,0.5,1.0};
+   GLfloat mdiff1[] = {0.6,0.0,0.6,1.0};
+   GLfloat mamb1[]  = {0.1,0.0,0.1,1.0};
+   GLfloat mdiff2[] = {0.0,1.0,0.0,1.0};   /* Green plane */
+   GLfloat mamb2[]  = {0.0,0.2,0.0,1.0};
+   GLfloat mdiff3[] = {0.5,0.5,0.5,1.0};  /* Grey boxes */
+   GLfloat mamb3[]  = {0.2,0.2,0.2,1.0};
+
+   /* Create a dark ground plane */
+   glLoadName(PLANEID);
+   if (drawquality > DRAFT)
+      glBegin(GL_POLYGON);
+   else
+      glBegin(GL_LINE_LOOP);
+   glColor3f(0.1,0.1,0.1);
+   if (drawquality > DRAFT) {
+      glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,mdiff2);
+      glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,mamb2);
+   }
+   glNormal3f( 0.0, 1.0, 0.0);
+   glVertex3f( 5.0, 0.0, 5.0);
+   glVertex3f( 5.0, 0.0,-5.0);
+   glVertex3f(-5.0, 0.0,-5.0);
+   glVertex3f(-5.0, 0.0, 5.0); 
+   glEnd();
+
+   /* Place a few yellow boxes around the place */
+   glLoadName(BOXID);
+   glColor3f(0.5,0.3,-0.2);
+   if (drawquality > DRAFT) {
+      glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,mdiff3);
+      glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,mamb3);
+   }
+   glPushMatrix();
+   glTranslatef(3.8,0.5,3.8); //first exterior base starts here
+   /*if (drawquality > DRAFT)*/
+      glutWireCube(0.2);
+   /*else
+      glutSolidCube(0.2);*/
+   glTranslatef(0.0,0.2,0.0);
+   /*if (drawquality > DRAFT)*/
+      glutWireCube(0.2);
+   /*else
+      glutSolidCube(0.2);*/
+   glTranslatef(0.0,0.2,0.0);
+   /*if (drawquality > DRAFT)*/
+      glutWireCube(0.2);
+   /*else
+      glutSolidCube(0.2);*/
+   i = 38;
+   do
+   {
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0);
+   glTranslatef(0.0,-0.2,0.0);
+	glutWireCube(0.2);
+   glTranslatef(0.0,-0.2,0.0);
+	glutWireCube(0.2);
+   glTranslatef(0.0,0.4,0.0);
+   i = 38;
+   do
+   {
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0);
+   glTranslatef(0.0,-0.2,0.0);
+	glutWireCube(0.2);
+   glTranslatef(0.0,-0.2,0.0);
+	glutWireCube(0.2);
+   glTranslatef(0.0,0.4,0.0);
+   i = 38;
+    do
+   {
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0);
+    glTranslatef(0.0,-0.2,0.0);
+	glutWireCube(0.2);
+   glTranslatef(0.0,-0.2,0.0);
+	glutWireCube(0.2);
+   glTranslatef(0.0,0.4,0.0);
+   i = 38;
+   do
+   {
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0); //first exterior base ends here
+   glTranslatef(-0.4,-0.6,-0.4);
+   i = 39;
+   do //second exterior base starts here
+   {
+	if(i == 39){
+		do{
+		glTranslatef(0.0,0.2,0.0); 
+		glutWireCube(0.2);
+		i--;
+		} while(i>34);
+	}
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0);
+   glTranslatef(0.0,-1.0,0.0);
+   i = 39;
+   do
+   {
+	if(i == 39){
+		do{
+		glTranslatef(0.0,0.2,0.0); 
+		glutWireCube(0.2);
+		i--;
+		} while(i>34);
+	}
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0);
+	glTranslatef(0.0,-1.0,0.0);
+   i = 39;
+   do
+   {
+	if(i == 39){
+		do{
+		glTranslatef(0.0,0.2,0.0); 
+		glutWireCube(0.2);
+		i--;
+		} while(i>34);
+	}
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0);
+	glTranslatef(0.0,-1.0,0.0);
+   i = 39;
+   do
+   {
+	if(i == 39){
+		do{
+		glTranslatef(0.0,0.2,0.0); 
+		glutWireCube(0.2);
+		i--;
+		} while(i>34);
+	}
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0); //second external base ends here
+   glTranslatef(-0.4,-1.0,-0.4);
+   i = 42;
+   do //third exterior base starts here
+   {
+	if(i == 42){
+		do{
+		glTranslatef(0.0,0.2,0.0); 
+		glutWireCube(0.2);
+		i--;
+		} while(i>30);
+	}
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0);
+   glTranslatef(0.0,-2.4,0.0);
+   i = 42;
+   do 
+   {
+	if(i == 42){
+		do{
+		glTranslatef(0.0,0.2,0.0); 
+		glutWireCube(0.2);
+		i--;
+		} while(i>30);
+	}
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0);
+   glTranslatef(0.0,-2.4,0.0);
+   i = 42;
+   do 
+   {
+	if(i == 42){
+		do{
+		glTranslatef(0.0,0.2,0.0); 
+		glutWireCube(0.2);
+		i--;
+		} while(i>30);
+	}
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0);
+   glTranslatef(0.0,-2.4,0.0);
+   i = 42;
+   do
+   {
+	if(i == 42){
+		do{
+		glTranslatef(0.0,0.2,0.0); 
+		glutWireCube(0.2);
+		i--;
+		} while(i>30);
+	}
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0);
+   glTranslatef(-0.4,-2.4,-0.4); //third exterior base ends here
+   i = 41;
+   do //fourth exterior base starts here
+   {
+	if(i == 41){
+		do{
+		glTranslatef(0.0,0.2,0.0); 
+		glutWireCube(0.2);
+		i--;
+		} while(i>26);
+	}
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0);
+   glTranslatef(0.0,-3.0,0.0);
+   i = 41;
+   do 
+   {
+	if(i == 41){
+		do{
+		glTranslatef(0.0,0.2,0.0); 
+		glutWireCube(0.2);
+		i--;
+		} while(i>26);
+	}
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0);
+   glTranslatef(0.0,-3.0,0.0);
+   i = 41;
+   do 
+   {
+	if(i == 41){
+		do{
+		glTranslatef(0.0,0.2,0.0); 
+		glutWireCube(0.2);
+		i--;
+		} while(i>26);
+	}
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0);
+   glTranslatef(0.0,-3.0,0.0);
+   i = 41;
+   do
+   {
+	if(i == 41){
+		do{
+		glTranslatef(0.0,0.2,0.0); 
+		glutWireCube(0.2);
+		i--;
+		} while(i>26);
+	}
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	i--;
+   } while(i>0); //fourth exterior base ends here
+   glTranslatef(-0.4,-3.0,-0.2);
+	glTranslatef(0.0,0.2,0.0); //start 4 pairs of inner twin-towers
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+   glTranslatef(0.2,-5.4,-0.2);
+   glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+   glTranslatef(-4.6,-5.4,0.2);
+   glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+   glTranslatef(-0.2,-5.4,-0.2);
+   glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.2,-5.4,-4.6);
+   glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+   glTranslatef(-0.2,-5.4,0.2);
+   glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(4.6,-5.4,-0.2);
+   glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+   glTranslatef(0.2,-5.4,0.2);
+   glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.2,0.0); 
+	glutWireCube(0.2); //end 4 inner pairs of twin-towers
+   glTranslatef(0.0,-5.4,0);
+    glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.2,-0.2,0.4); //start of lowest layer [north-east corner]
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.4);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2); //end of lowest level [north-eastern corner]
+	glTranslatef(-4.2,0.2,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.4,-0.2,0.2); //start of lowest layer [north-west corner]
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.4,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,-0.2);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(-0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.0,0.0,0.2);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2);
+	glTranslatef(0.2,0.0,0.0);
+	glutWireCube(0.2); //end of lowest level [north-western corner]
+   glPopMatrix();
+
+   /* Create a magenta bouncing ball */
+   /*
+   glLoadName(SPHEREID);
+   glColor3f(0.0,0.0,0.0);
+   if (drawquality > DRAFT) {
+      glMaterialfv(GL_FRONT,GL_SHININESS,mshin1);
+      glMaterialfv(GL_FRONT,GL_SPECULAR,mspec1);
+   }
+   glPushMatrix();
+   glTranslatef(0.0,radius+0.5*(1+sin(PI*theta/180)),0.0);
+   glScalef(radius,radius,radius);
+   if (ballbounce)
+      theta += ballspeed;
+   if (drawquality > DRAFT)
+      glutSolidSphere(1.0,16,16);
+   else
+      glutWireSphere(1.0,32,32);
+   glPopMatrix();
+   *
+   /* Create a yellow half-oval loop at one end */
+ /*  glLoadName(OVALID);
+   glBegin(GL_LINE_STRIP);
+   glColor3f(1.0,1.0,0.0);
+   glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
+   for (i=0;i<=180;i++)
+      glVertex3f(2*cos(i*PI/180),1.5*sin(i*PI/180),-2.0);*/
+   glEnd();
+
+   /* Write some text */
+   //glLoadName(TEXTID);
+   //DrawTextXY(-2.0,-0.25,2.0,0.002,"Arjo + Frank = Pogi");
 }
+
+//void DrawTextXY(double x,double y,double z,double scale,char *s)
+//{
+//   int i;
+//
+//   glPushMatrix();
+//   glTranslatef(x,y,z);
+//   glScalef(scale,scale,scale);
+//   for (i=0;i<strlen(s);i++)
+//    glutStrokeCharacter(GLUT_STROKE_ROMAN,s[i]);
+//   glPopMatrix();
+//}
 
 void mouse (int button, int state, int x, int y) 
 {	
